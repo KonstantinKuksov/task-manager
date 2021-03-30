@@ -8,6 +8,18 @@ const taskRouter = require('./routers/task');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// app.use((req, res, next) => {
+//   if (req.method === 'GET') {
+//     res.send('GET requests are disabled');
+//   } else {
+//     next();
+//   }
+// });
+
+app.use((req, res, next) => {
+  res.status(503).send('Server unavalible now. Please, try again later');
+});
+
 app.use(express.json());
 app.use(userRouter);
 app.use(taskRouter);
@@ -16,17 +28,16 @@ app.listen(PORT, () => {
   console.log(`Server is up on port ${PORT}.`);
 });
 
-const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const myFunc = async () => {
-  const password = 'Red12345';
-  const hashedPassword = await bcrypt.hash(password, 8);
+  const token = jwt.sign({ _id: 'abc123' }, 'thisismynewcourse', {
+    expiresIn: '7 days',
+  });
+  console.log(token);
 
-  console.log(password);
-  console.log(hashedPassword);
-
-  const isMatch = await bcrypt.compare('Red12345', hashedPassword);
-  console.log(isMatch);
+  const data = jwt.verify(token, 'thisismynewcourse');
+  console.log(data);
 };
 
 myFunc();
