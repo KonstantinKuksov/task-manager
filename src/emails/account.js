@@ -1,23 +1,29 @@
-const sgMail = require('@sendgrid/mail');
+const nodemailer = require('nodemailer');
 
-const sendgridAPIKey =
-  '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';
-
-sgMail.setApiKey(sendgridAPIKey);
+const transporter = nodemailer.createTransport({
+  host: 'smtp.gmail.com',
+  port: 587,
+  secure: false,
+  auth: {
+    user: process.env.EMAIL_ADRESS,
+    pass: process.env.EMAIL_PASSWORD,
+  },
+});
 
 const sendWelcomeEmail = (email, name) => {
-  sgMail.send({
+  transporter.sendMail({
+    from: `"Task Manager" <${process.env.EMAIL_ADRESS}>`,
     to: email,
-    from: 'taskmanagerkk@gmail.com',
-    subject: 'Welcome to the Task Manager App!',
-    text: `Welcome to the Task Manager, ${name}! Thank you for registration! We hope you'll like our application and it'll be very useful for you!/nWith best wishes, Task Manager team!`,
+    subject: 'Welcome!',
+    text: `Welcome to Task Manager, ${name}! Thank you for registration! We hope you'll like our application and it'll be very useful for you.
+    With best wishes, Task Manager team!`,
   });
 };
 
 const sendCancelationEmil = (email, name) => {
-  sgMail.send({
+  transporter.sendMail({
+    from: `"Task Manager" <${process.env.EMAIL_ADRESS}>`,
     to: email,
-    from: 'taskmanagerkk@gmail.com',
     subject: 'Cancelation from Task Manager',
     text: `Dear ${name}! Your canselation have done successfuly. Please tell us why you did it. We hope to see you later!`,
   });
