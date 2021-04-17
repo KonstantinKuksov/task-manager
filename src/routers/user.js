@@ -89,7 +89,7 @@ router.delete('/users/me', auth, async (req, res) => {
     sendCancelationEmil(req.user.email, req.user.name);
     res.send(req.user);
   } catch (e) {
-    res.status(500).send();
+    res.status(500).send(e);
   }
 });
 
