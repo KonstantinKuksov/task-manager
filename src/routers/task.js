@@ -4,7 +4,6 @@ const auth = require('../middleware/auth');
 const Task = require('../models/task');
 
 router.post('/tasks', auth, async (req, res) => {
-  // const task = new Task(req.body);
   const task = new Task({
     ...req.body,
     owner: req.user._id,

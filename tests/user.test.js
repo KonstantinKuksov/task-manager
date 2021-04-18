@@ -106,7 +106,58 @@ test('Should not update invalid user fields', async () => {
     .expect(400);
 });
 
-// Should not signup user with invalid name/email/password
-// Should not update user if unauthenticated
-// Should not update user with invalid name/email/password
-// Should not delete user if unauthenticated
+test('Should not signup user with invalid email/password', async () => {
+  await request(app)
+    .post('/users')
+    .send({
+      name: 'Kostya',
+      email: 'mike@example.com',
+      password: 'MyPass777!',
+    })
+    .expect(400);
+  await request(app)
+    .post('/users')
+    .send({
+      name: 'Kostya',
+      email: 'notCorrectEmail',
+      password: 'MyPass777!',
+    })
+    .expect(400);
+  await request(app)
+    .post('/users')
+    .send({
+      name: 'Kostya',
+      email: 'kostya123@example.com',
+      password: 'password',
+    })
+    .expect(400);
+});
+
+test('Should not update user if unauthenticated', async () => {
+  await request(app)
+    .patch('/users/me')
+    .send({
+      name: 'Tomas',
+    })
+    .expect(401);
+});
+
+test('Should not update user with invalid email/password', async () => {
+  await request(app)
+    .patch('/users/me')
+    .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
+    .send({
+      email: 'invalidEmail',
+    })
+    .expect(400);
+  await request(app)
+    .patch('/users/me')
+    .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
+    .send({
+      password: 'invlidPassword123!',
+    })
+    .expect(400);
+  const user = await User.findById(userOneId);
+  expect(user.email).not.toBe('invalidEmail');
+  expect(user.password).not.toBe('invlidPassword123!');
+});
